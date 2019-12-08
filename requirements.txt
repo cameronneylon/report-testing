@@ -3,3 +3,6 @@ matplotlib
 numpy
 pandas
 seaborn
+
+pandas-gbq
+pydata-google-auth

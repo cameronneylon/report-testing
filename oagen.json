@@ -1,0 +1,9 @@
+{
+    "cache_bucket_name" : "oa_demo_cache",
+    "output_bucket_name" : "oa_demo_output",
+    "analytics" : [
+        ["oagen.do_everything", {}]
+    ],
+    "template_file" : "catalog.md",
+    "filters" : [["markdown", "html"], ["xhtml2pdf", "pdf"]]
+}

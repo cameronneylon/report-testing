@@ -1,7 +1,8 @@
 import demos
+import oagen
 from precipy.main import render_fn
 
-analytics_modules = [demos]
+analytics_modules = [demos, oagen]
 
 def render(request):
    return render_fn(request, analytics_mods=analytics_modules)
