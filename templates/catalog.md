@@ -1,24 +1,29 @@
 <style>
     @page {
-        size: letter landscape;
+        size: letter portrait;
         margin: 2cm;
+    }
+
+    p {
+        font-size: 12pt;
     }
 </style>
 
 ## Welcome
 
-This is some text.
+This is an automatically generated catalog of the functions and assets that have been generated.
 
-Here is a list of keys:
 {% for k in keys %}
-### {{ k }}
+### Function: {{ k }}
 
 {% if data[k].files is defined %}
 {% for cn, info in data[k].files.items() %}
-- {{ cn  }}
+#### Generated file:  {{ cn }}
+
 {% for kk, vv in info.items() -%}
      - {{ kk }}: {{ vv }}
 {% endfor -%}
+
 ![Plot]({{ data[k].files[cn]['local_path'] }})
 {% endfor %}
 {% endif %}
