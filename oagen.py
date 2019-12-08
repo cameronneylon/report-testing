@@ -267,7 +267,12 @@ def do_everything(batch):
     
         data = melt[(melt.variables.isin(pie_variables)) & (melt['id']==grid) & (melt.published_year==focus_year)][['variables', 'value']]
         data = data.set_index('variables').reindex(pie_variables)
+
         print(data)
+        batch.save_plain_text(data.to_html(), "pie_variables.html")
+        batch.save_plain_text(data.to_json(), "pie_variables.json")
+        batch.save_dict_as_json(data.to_dict(), "pie_variables_dict.json")
+
         outputs_pie = data.plot.pie(y='value', startangle=90, labels=None, legend=True, colors = sns.color_palette()[1:])
         outputs_pie.set_ylabel('')
         my_circle=plt.Circle( (0,0), 0.4, color='white')
