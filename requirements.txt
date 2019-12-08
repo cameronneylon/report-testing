@@ -1,4 +1,4 @@
-precipy>=0.0.6
+precipy>=0.0.7
 matplotlib
 numpy
 pandas
