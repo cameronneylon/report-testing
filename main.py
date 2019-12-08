@@ -12,4 +12,5 @@ def render(request):
 if __name__ == '__main__':
     from precipy.mock import Request
     import sys
-    render_fn(Request(sys.argv[1]), analytics_mods=analytics_modules)
+    uuid = render_fn(Request(sys.argv[1]), analytics_mods=analytics_modules)
+    print(uuid)
