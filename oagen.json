@@ -1,9 +1,15 @@
 {
     "cache_bucket_name" : "oa_demo_cache",
     "output_bucket_name" : "oa_demo_output",
-    "analytics" : [
-        ["oagen.do_everything", {}]
-    ],
-    "template_file" : "catalog.md",
+    "logfile" : "logs/oagen.log",
+    "loglevel" : "DEBUG",
+    "analytics" : {
+        "oagen.compare_grid" : {
+            "focus_year" : 2017,
+            "grid_id" : "grid.47609.3c", 
+            "comparison_groups" : ["us_ucs", "uk_rus", "au_go8"]
+        }
+    },
+    "template_file" : "report.md",
     "filters" : [["markdown", "html"], ["xhtml2pdf", "pdf"]]
 }
