@@ -1,0 +1,25 @@
+{
+    "cache_bucket_name" : "reporting_cache",
+    "output_bucket_name" : "reporting_ross",
+    "logfile" : "logs/oagen.log",
+    "loglevel" : "DEBUG",
+    "analytics" : [
+        ["reporting" , 
+            {
+            "focus_year" : 2018,
+            "year_range": [2005, 2019],
+            "identifier" : "grid.38142.3c", 
+            "comparison" : ["grid.38142.3c", 
+                            "grid.47840.3f",
+                            "grid.19006.3e",
+                            "grid.47100.32",
+                            "grid.5335.0",
+                            "grid.116068.8",
+                            "grid.137628.9"]
+            }
+        ]
+            ],
+    "template_file" : "report_cn.md",
+    "output_basename" : "{{ reporting['identifier'] }}_oa_report",
+    "filters" : [["markdown", "html"], ["xhtml2pdf", "pdf"]]
+}
