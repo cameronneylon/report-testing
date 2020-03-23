@@ -1,6 +1,6 @@
 {
     "cache_bucket_name" : "oa_demo_cache",
-    "output_bucket_name" : "oa_demo_output",
+    "output_bucket_name" : "oa_demo_output_cn",
     "logfile" : "logs/oagen.log",
     "loglevel" : "DEBUG",
     "analytics" : {

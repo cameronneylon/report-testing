@@ -1,6 +1,6 @@
 {
     "cache_bucket_name" : "reporting_cache",
-    "output_bucket_name" : "reporting_simon",
+    "output_bucket_name" : "reporting_loughborough",
     "logfile" : "logs/oagen.log",
     "loglevel" : "DEBUG",
     "analytics" : [
@@ -8,11 +8,11 @@
             {
             "focus_year" : 2018,
             "year_range": [2005, 2019],
-            "identifier" : "grid.7107.1", 
+            "identifier" : "grid.6571.5", 
             "comparison" : ["grid.83440.3b", 
                             "grid.5335.0", 
                 "grid.8756.c", 
-                "grid.6571.5", 
+                "grid.7107.1", 
                 "grid.11914.3c", 
                 "grid.11201.33"]
             }

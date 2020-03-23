@@ -230,12 +230,12 @@ def reporting(batch,
                                    project_id)
 
 
-    # institutions.to_csv('inst.csv')
-    # funders.to_csv('funders.csv')
-    # output_types.to_csv('outputs.csv')
-    # institutions = pd.read_csv('inst.csv')
-    # funders = pd.read_csv('funders.csv')
-    # output_types = pd.read_csv('outputs.csv')
+    institutions.to_csv('inst.csv')
+    funders.to_csv('funders.csv')
+    output_types.to_csv('outputs.csv')
+    institutions = pd.read_csv('inst.csv')
+    funders = pd.read_csv('funders.csv')
+    output_types = pd.read_csv('outputs.csv')
 
     # Basic Report Metadata
     batch.save_dict_as_json(
