@@ -130,9 +130,9 @@ caption {
 
 </style>
 
-{% set metadata = load_json("metadata.json") %}
-{% set oa_table_by_year = load_json('oa_table_by_year.json') %}
-{% set focus_year = load_json('focus_year_data.json') %}
+{% set metadata = load_json(plot_graphs.files["metadata.json"].canonical_filename) %}
+{% set oa_table_by_year = load_json(plot_graphs.files['oa_table_by_year.json'].canonical_filename) %}
+{% set focus_year = load_json(plot_graphs.files['focus_year_data.json'].canonical_filename) %}
 
 <!-- Static Frame Left Footer for Reports -->
 
