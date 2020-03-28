@@ -215,7 +215,11 @@ All DOIs identified for {{ focus_year.year }} were matched to funder names provi
     </thead>
     <tbody>
         {% for row in oa_table_by_year[1:] %}
-            <tr>
+            {% if loop.index.even() %}
+            <tr style="table-even-row">
+            {% else %}
+            <tr style="table-odd-row">
+            {% endif %}
                 {% for col in table_columns %}
                     {% if col == 'Year' %}
                     <td text-align=left>{{ row[col] }}</td>

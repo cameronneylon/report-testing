@@ -90,11 +90,6 @@ WHERE
     helpers.clean_geo_names(institutions)
     helpers.nice_column_names(institutions)
 
-
-    with pd.HDFStore(HDF5_CANONICAL_FILENAME) as store: # write directly to the CACHE file location
-        store['institutions'] = institutions
-    af.add_existing_file(HDF5_CANONICAL_FILENAME, remove=True)
-
     template_sql = '''
 SELECT
   id,
@@ -125,10 +120,6 @@ ORDER BY published_year DESC, count DESC
                                   ['oa', 'green', 'gold'],
                                   'count')
     helpers.nice_column_names(funders)
-    
-    with pd.HDFStore(HDF5_CANONICAL_FILENAME) as store: # write directly to the CACHE file location
-        store['funders'] = funders
-    af.add_existing_file(HDF5_CANONICAL_FILENAME, remove=True)
 
     template_sql = '''
 SELECT
@@ -163,6 +154,8 @@ ORDER BY published_year DESC
     helpers.nice_column_names(output_types)
     
     with pd.HDFStore(HDF5_CANONICAL_FILENAME) as store: # write directly to the CACHE file location
+        store['institutions'] = institutions
+        store['funders'] = funders
         store['outputs'] = outputs
     af.add_existing_file(HDF5_CANONICAL_FILENAME, remove=True)
 

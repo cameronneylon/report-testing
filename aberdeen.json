@@ -31,8 +31,7 @@
             }
         ]
     ],
-    "template_file": "report_cn.md",
-    "output_basename": "{{ reporting['identifier'] }}_oa_report",
+    "templates": [{"file": "report_cn.md", "name": "{{plot_graphs.args.identifier}}_oa_report.md"}],
     "filters": [
         [
             "markdown",
