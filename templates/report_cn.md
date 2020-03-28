@@ -130,9 +130,9 @@ caption {
 
 </style>
 
-{% set metadata = load_json(plot_graphs.files["metadata.json"].canonical_filename) %}
-{% set oa_table_by_year = load_json(plot_graphs.files['oa_table_by_year.json'].canonical_filename) %}
-{% set focus_year = load_json(plot_graphs.files['focus_year_data.json'].canonical_filename) %}
+{% set metadata = load_json(plot_graphs.files["metadata.json"].cache_filepath) %}
+{% set oa_table_by_year = load_json(plot_graphs.files['oa_table_by_year.json'].cache_filepath) %}
+{% set focus_year = load_json(plot_graphs.files['focus_year_data.json'].cache_filepath) %}
 
 <!-- Static Frame Left Footer for Reports -->
 
@@ -215,7 +215,7 @@ All DOIs identified for {{ focus_year.year }} were matched to funder names provi
     </thead>
     <tbody>
         {% for row in oa_table_by_year[1:] %}
-            {% if loop.index.even() %}
+            {% if loop.index is even() %}
             <tr style="table-even-row">
             {% else %}
             <tr style="table-odd-row">
