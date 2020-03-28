@@ -128,6 +128,14 @@ caption {
     margin-bottom: auto;
 }
 
+table-even-row {
+    background-color: white;
+}
+
+table-odd-row {
+    background-color: lightgray;
+}
+
 </style>
 
 {% set metadata = load_json(plot_graphs.files["metadata.json"].cache_filepath) %}
@@ -189,8 +197,8 @@ In {{ focus_year.published_year }} the overall level of open access for {{ metad
 
 <figure>
     <p>
-    <img src="oapc_by_time.png" width=400px />
-    <img src="oa_bar_chart.png"  width=450px />
+    <img src="oapc_by_time.png" width=450px />
+    <img src="oa_bar_chart.png"  width=400px />
     <figcaption><strong>Figure 2.</strong> Open Access Performance Over Time and Comparison With Peer Institutions.</figcaption>
 </figure>
 

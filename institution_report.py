@@ -237,7 +237,7 @@ def plot_graphs(batch,
     #                                                 year_range)
     # outputs_over_time.process_data()
     # output_types_graph = outputs_over_time.plot()
-    # output_types_graph.savefig('outputs_time_chart.png')
+    # output_types_graph.savefig('outputs_time_chart.png', bbox_inches='tight', dpi=300)
     # batch.add_existing_file('outputs_time_chart.png', remove=True)
 
     # outputs_pie = charts.OutputTypesPieChart(output_types,
@@ -246,7 +246,7 @@ def plot_graphs(batch,
     # outputs_pie.process_data()
     # outputs_pie_graph = outputs_pie.plot()
     # outputs_pie.watermark('assets/coki_small.png', xpad=100)
-    # outputs_pie_graph.savefig('outputs_pie_chart.png')
+    # outputs_pie_graph.savefig('outputs_pie_chart.png', bbox_inches='tight', dpi=300)
     # batch.add_existing_file('outputs_pie_chart.png', remove=True)
     # batch.save_matplotlib_plt(outputs_pie_graph, 'outputs_pie_chart.png')
 
@@ -297,7 +297,7 @@ def plot_graphs(batch,
                                                  )
     oa_progress.process_data()
     oa_progress_chart = oa_progress.plot()
-    oa_progress_chart.savefig("oapc_by_time.png")
+    oa_progress_chart.savefig("oapc_by_time.png", bbox_inches='tight', dpi=300)
     batch.add_existing_file("oapc_by_time.png", remove=True)
 
     # OA Bar Chart
@@ -309,7 +309,7 @@ def plot_graphs(batch,
     oa_bar.process_data()
     oa_bar_chart = oa_bar.plot()
     oa_bar.watermark('assets/coki_small.png', xpad=-100)
-    oa_bar_chart.savefig("oa_bar_chart.png")
+    oa_bar_chart.savefig("oa_bar_chart.png", bbox_inches='tight', dpi=300)
     batch.add_existing_file("oa_bar_chart.png", remove=True)
 
     # # OA by Funder graph
@@ -318,7 +318,7 @@ def plot_graphs(batch,
     # funder_bar.process_data()
     # funder_bar_chart = funder_bar.plot()
     # funder_bar.watermark('assets/coki_small.png', xpad=-1500)
-    # funder_bar_chart.savefig("funder_bar_chart.png")
+    # funder_bar_chart.savefig("funder_bar_chart.png", bbox_inches='tight', dpi=300)
     # batch.add_existing_file("funder_bar_chart.png", remove=True)
 
     # Citation graphs
@@ -331,7 +331,7 @@ def plot_graphs(batch,
         f = cite_count.plot()
         #f = cite_count.watermark('assets/coki_small.png', xpad=-600)
         fname = 'cite_' + kind + '.png'
-        f.savefig(fname)
+        f.savefig(fname, bbox_inches='tight', dpi=300)
         batch.add_existing_file(fname, remove=True)
 
     cite_bar = charts.OAAdvantageBarChart(institutions,
@@ -340,5 +340,5 @@ def plot_graphs(batch,
     d = cite_bar.process_data()
     f = cite_bar.plot()
     cite_bar.watermark('assets/coki_small.png', xpad=100)
-    f.savefig('cite_bar.png')
+    f.savefig('cite_bar.png', bbox_inches='tight', dpi=300)
     batch.add_existing_file('cite_bar.png', remove=True)
