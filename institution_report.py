@@ -24,19 +24,23 @@ id_vars = ['id', 'name', 'published_year',
            'country', 'country_code', 'region', 'subregion',
            'Total Publications', 'Year of Publication', 'University Name', 'Region', 'Country']
 
-project_id = project_id = 'coki-scratch-space'
+project_id = 'coki-scratch-space'
+
+HDF5_CANONICAL_FILENAME = "store.h5"
 
 
-def get_institutions_data(batch,
-                          identifier: str,
-                          comparisons: list,
-                          credentials,
-                          project_id) -> pd.DataFrame:
+def get_data(af, current_table,
+                          project_id=project_id, 
+                          year_range: tuple=(2000, 2019)):
 
-    comparison_groups = [
-        ident for ident in comparisons if ident[0:4] != 'grid']
-    grids = [identifier] + \
-        [ident for ident in comparisons if ident[0:4] == 'grid']
+    SCOPES = [
+        'https://www.googleapis.com/auth/cloud-platform',
+        'https://www.googleapis.com/auth/drive',
+    ]
+
+    credentials = pydata_google_auth.get_user_credentials(
+        SCOPES,
+    )
 
     template_sql = '''
 SELECT
@@ -64,17 +68,16 @@ SELECT
     combined.total_hybrid_citations as hybrid_citations
 
 FROM
-    `academic-observatory.institution.institutions_latest_oacites` as institutions,
+    `{}` as institutions,
     UNNEST(years) as years
 
 WHERE
     years.published_year > 2000 and
-    years.published_year < 2020 and
-    institutions.id in ({})
+    years.published_year < 2020
 '''
-    identifiers = "'{}'".format("','".join(grids))
-    institutions_sql = template_sql.format(identifiers)
-    institutions = pd.io.gbq.read_gbq(institutions_sql,
+
+    institutions_sql = template_sql.format(current_table)
+    institutions = pd.io.gbq.read_gbq(template_sql,
                                       project_id=project_id,
                                       credentials=credentials,
                                       dialect='standard',
@@ -87,18 +90,14 @@ WHERE
     helpers.clean_geo_names(institutions)
     helpers.nice_column_names(institutions)
 
-    return institutions
 
-
-def get_funder_data(batch,
-                    identifier: str,
-                    credentials,
-                    project_id: str,
-                    year_range: tuple = (2010, 2020),
-                    ) -> pd.DataFrame:
+    with pd.HDFStore(HDF5_CANONICAL_FILENAME) as store: # write directly to the CACHE file location
+        store['institutions'] = institutions
+    af.add_existing_file(HDF5_CANONICAL_FILENAME, remove=True)
 
     template_sql = '''
 SELECT
+  id,
   years.published_year as published_year,
   funders.name as name,
   funders.count as count,
@@ -106,18 +105,17 @@ SELECT
   funders.green as green,
   funders.gold as gold
 
-FROM `academic-observatory.institution.institutions_latest`,
+FROM `{}`,
   UNNEST(years) as years,
   UNNEST(years.combined.funders) as funders
 
 WHERE
-  id = '{}' AND
   years.published_year > {} AND
   years.published_year < {}
 
 ORDER BY published_year DESC, count DESC
 '''
-    funders_sql = template_sql.format(identifier, *year_range)
+    funders_sql = template_sql.format(current_table, *year_range)
     funders = pd.io.gbq.read_gbq(funders_sql,
                                  project_id=project_id,
                                  credentials=credentials,
@@ -127,15 +125,11 @@ ORDER BY published_year DESC, count DESC
                                   ['oa', 'green', 'gold'],
                                   'count')
     helpers.nice_column_names(funders)
-    return funders
+    
+    with pd.HDFStore(HDF5_CANONICAL_FILENAME) as store: # write directly to the CACHE file location
+        store['funders'] = funders
+    af.add_existing_file(HDF5_CANONICAL_FILENAME, remove=True)
 
-
-def get_outputs_data(batch,
-                     identifier: str,
-                     credentials,
-                     project_id: str,
-                     year_range: tuple = (2010, 2020),
-                     ) -> pd.DataFrame:
     template_sql = '''
 SELECT
   id,
@@ -146,18 +140,17 @@ SELECT
   type.green as green,
   type.gold as gold
 
-FROM `academic-observatory.institution.institutions_latest`,
+FROM `{}`,
   UNNEST(years) as years,
   UNNEST(years.combined.output_types) as type
 
 WHERE
-  id = '{}' AND
   years.published_year > {} AND
   years.published_year < {}
 
 ORDER BY published_year DESC
 '''
-    type_sql = template_sql.format(identifier, *year_range)
+    type_sql = template_sql.format(current_table, *year_range)
     output_types = pd.io.gbq.read_gbq(type_sql,
                                       project_id=project_id,
                                       credentials=credentials,
@@ -168,7 +161,10 @@ ORDER BY published_year DESC
                                   'total')
     helpers.clean_output_type_names(output_types)
     helpers.nice_column_names(output_types)
-    return output_types
+    
+    with pd.HDFStore(HDF5_CANONICAL_FILENAME) as store: # write directly to the CACHE file location
+        store['outputs'] = outputs
+    af.add_existing_file(HDF5_CANONICAL_FILENAME, remove=True)
 
 
 def generate_table_data(batch,
@@ -207,35 +203,18 @@ def get_gcp_credentials():
     return credentials
 
 
-def reporting(batch,
+def plot_graphs(batch,
               identifier: str,
               comparison: list,
               focus_year: int,
               year_range: tuple = (2000, 2019)):
 
-    credentials = get_gcp_credentials()
-    institutions = get_institutions_data(batch,
-                                         identifier,
-                                         comparison,
-                                         credentials,
-                                         project_id)
-    funders = get_funder_data(batch,
-                              identifier,
-                              credentials,
-                              project_id)
-
-    output_types = get_outputs_data(batch,
-                                   identifier,
-                                   credentials,
-                                   project_id)
-
-
-    institutions.to_csv('inst.csv')
-    funders.to_csv('funders.csv')
-    output_types.to_csv('outputs.csv')
-    institutions = pd.read_csv('inst.csv')
-    funders = pd.read_csv('funders.csv')
-    output_types = pd.read_csv('outputs.csv')
+    store_filepath = af.path_to_cached_file(HDF5_CANONICAL_FILENAME, "get_data")
+    print(filepath)
+    store = pd.HDFStore(filepath)
+    institutions = store['institutions']
+    funders = store['funders']
+    outputs = store['outputs']
 
     # Basic Report Metadata
     batch.save_dict_as_json(
@@ -279,13 +258,7 @@ def reporting(batch,
                            'Reports‡',
                            'Datasets‡'
                            ]
-    # output_table_data= generate_table_data(batch, 
-    #                                        output_types,
-    #                                        identifier,
-    #                                        output_columns,
-    #                                        sort_column = 'Year',
-    #                                        )
-    #batch.save_dict_as_json(output_table_data, 'outputs_table_by_year.json')
+
 
     # OA Values over time
     oa_columns = ['Year of Publication',
