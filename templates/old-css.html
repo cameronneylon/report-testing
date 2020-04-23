@@ -1,0 +1,113 @@
+<style>
+    @font-face {
+        font-family: Gelasio;
+        src: url('fonts/Gelasio-Regular.ttf');
+    }
+    @font-face {
+        font-family: DancingScript;
+        src: url('fonts/DancingScript-VariableFont:wght.ttf');
+    }
+    @font-face {
+        font-family: Baskerville;
+        src: url('fonts/LibreBaskerville-Regular.ttf');
+    }
+    @font-face {
+        font-family: Garamond;
+        src: url('/Users/266883j/Documents/oa_reporting_demo/fonts/Garamond.ttf')
+    }
+    /* Italic */
+    @font-face {
+       font-family: Garamond;
+       src: url('/Users/266883j/Documents/oa_reporting_demo/fonts/Garamond-Italic.ttf');
+       font-style: italic;
+    }
+    
+    /* Bold */
+    @font-face {
+       font-family: Garamond;
+       src: url('/Users/266883j/Documents/oa_reporting_demo/fonts/Garamond-Bold.ttf');
+       font-weight: bold;
+    }
+    @font-face {
+        font-family: Montserrat;
+        src: url('/Users/266883j/Documents/oa_reporting_demo/fonts/Montserrat-Regular.ttf')
+    }
+    @page {
+        size: a4 portrait;
+        @frame content_frame {          
+                left: 2cm; width: 17cm; top: 2.5cm; height: 24.2cm;
+            }
+        @frame footer_frame {           
+                -pdf-frame-content: footer_content;
+                left: 2cm; width: 17cm; top: 26.7cm; height: 2cm;
+            }
+    }
+    body {
+        font-family: Garamond, serif;
+    }
+    
+    h1 { 
+        font-family: Montserrat, sans-serif;
+        font-size: 18pt;
+        color: #404040;
+        margin: 0 ;
+        padding: 0pt;
+    }
+    h2 { 
+        font-family: Montserrat, sans-serif;
+        font-size: 14pt;
+        color: DimGrey;
+        margin: 0 ;
+        padding: 0pt;
+    }
+    h3 { 
+        font-size: 12pt ; 
+        font-family: Montserrat, sans-serif;
+        margin: 0;
+        padding: 0pt;    
+    } 
+    h4 { font-size: 12pt ; } 
+    p { 
+        font-size: 11pt;
+        margin: 0;
+        padding-top: 2;
+    }
+    table {
+        font-size: 9pt ;
+        
+    }
+    th {
+        table-layout: auto;
+        padding-top: 4pt;
+        padding-left: 2pt;
+        padding-right: 0pt;
+        text-align: center;
+        font-weight: bold;
+        border-bottom-color: black;
+        border-bottom-width: 1px;
+        border-bottom-style: solid;
+        border-top-color: black;
+        border-top-width: 1px;
+        border-top-style: black;
+    }
+    td {
+        padding-top: 2pt;
+        padding-left: 2pt;
+        padding-right: 0pt;
+        text-align: center;
+    }
+    img {
+        vertical-align: top;
+    }
+    
+    figcaption {
+        font-size: 9pt;
+    }
+    caption {
+        font-size: 9pt;
+    }
+    footer {
+        font-size: 10pt;
+    }
+    
+    </style>

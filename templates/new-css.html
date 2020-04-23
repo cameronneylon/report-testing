@@ -1,0 +1,123 @@
+<style>
+    @font-face {
+        font-family: 'Gill Sans';
+        src: url('fonts/GillSans.ttf');
+    }
+    
+    /* Bold */
+    @font-face {
+       font-family: 'Gill Sans';
+       src: url('fonts/GillSans-Bold.ttf');
+       font-weight: bold;
+    }
+    @page {
+        size: a4 portrait;
+        background-image: url('/Users/266883j/Documents/oa_reporting_demo/assets/title_image.png');
+        @frame title {
+            left: 1cm; width: 17cm; top: 14cm; height: 5cm;
+        }
+    }
+    @page report {
+        size: a4 portrait;
+        @frame content_frame {          
+            left: 2cm; width: 17cm; top: 2.5cm; height: 24.2cm;
+        }
+        @frame footer_frame {           
+            -pdf-frame-content: footer_content;
+            left: 2cm; width: 17cm; top: 26.7cm; height: 2cm;
+        }
+    }
+    body {
+        font-family: Arial, Helvetica, sans-serif;
+    }
+    .subtitle {
+        font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+        font-size: 14pt ; 
+        color: #17365D;
+        margin: 0;
+        padding: 0pt;      
+    }
+    h1 { 
+        font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+        font-size: 20pt;
+        font-weight: bold;
+        color: black;
+        margin: 0 ;
+        padding: 0pt;
+    }
+    subtitle {
+        font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+        font-size: 14pt ; 
+        color: #17365D;
+        margin: 0;
+        padding: 0pt;      
+    }
+    h2 { 
+        font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+        font-size: 14pt;
+        font-weight: bold;
+        color: black;
+        margin: 0 ;
+        padding: 0pt;
+    }
+    h3 { 
+        font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+        font-size: 12pt ; 
+        font-weight: bold;
+        color: #17365D;
+        margin: 0;
+        padding: 0pt;    
+    } 
+    h4 { font-size: 12pt ; } 
+    p { 
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 11pt;
+        margin: 0;
+        padding-top: 2;
+    }
+    table {
+        font-size: 10pt ;
+        
+    }
+    th {
+        table-layout: auto;
+        padding-top: 4pt;
+        padding-left: 2pt;
+        padding-right: 0pt;
+        text-align: center;
+        font-weight: bold;
+        border-bottom-color: black;
+        border-bottom-width: 1px;
+        border-bottom-style: solid;
+        border-top-color: black;
+        border-top-width: 1px;
+        border-top-style: black;
+    }
+    td {
+        padding-top: 4pt;
+        padding-left: 2pt;
+        padding-right: 0pt;
+        text-align: center;
+    }
+    img {
+        vertical-align: top;
+    }
+    
+    figcaption {
+        font-size: 9pt;
+    }
+    caption {
+        font-size: 9pt;
+    }
+    .footer {
+        font-size: 10pt;
+    }
+    .titleface {
+        font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+        font-size: 24pt;
+        font-weight: bold;
+        color: black;
+        padding: 4pt;
+    }
+    
+    </style>
