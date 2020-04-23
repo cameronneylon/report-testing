@@ -1,170 +1,38 @@
 {% import "macros.md" as helper with context %}
-<style>
-@font-face {
-    font-family: Gelasio;
-    src: url('fonts/Gelasio-Regular.ttf');
-}
-@font-face {
-    font-family: DancingScript;
-    src: url('fonts/DancingScript-VariableFont:wght.ttf');
-}
-@font-face {
-    font-family: Baskerville;
-    src: url('fonts/LibreBaskerville-Regular.ttf');
-}
-@font-face {
-    font-family: Garamond;
-    src: url('/Users/266883j/Documents/oa_reporting_demo/fonts/Garamond.ttf')
-}
-/* Italic */
-@font-face {
-   font-family: Garamond;
-   src: url('/Users/266883j/Documents/oa_reporting_demo/fonts/Garamond-Italic.ttf');
-   font-style: italic;
-}
-
-/* Bold */
-@font-face {
-   font-family: Garamond;
-   src: url('/Users/266883j/Documents/oa_reporting_demo/fonts/Garamond-Bold.ttf');
-   font-weight: bold;
-}
-@font-face {
-    font-family: Montserrat;
-    src: url('/Users/266883j/Documents/oa_reporting_demo/fonts/Montserrat-Regular.ttf')
-}
-@page {
-    size: a4 portrait;
-    @frame content_frame {          
-            left: 1cm; width: 19cm; top: 1.5cm; height: 25.2cm;
-        }
-    @frame left_footer_frame {           
-            -pdf-frame-content: left_footer_content;
-            left: 1.5cm; width: 10cm; top: 26.7cm; height: 2cm;
-            border-style: solid none none none;
-        }
-
-    @frame right_footer_frame {
-            -pdf-frame-content: right_footer_content;
-            left: 17cm; width 3cm; top: 26.7cm; height: 2cm;
-            border-style: solid none none none;
-    }
-}
-body {
-    font-family: Garamond, serif;
-}
-
-h1 { 
-    font-family: Montserrat, sans-serif;
-    font-size: 18pt;
-    color: #404040;
-    margin: 0 ;
-    padding: 2pt;
-}
-h2 { 
-    font-family: Montserrat, sans-serif;
-    font-size: 14pt;
-    color: DimGrey;
-    margin: 0 ;
-    padding: 2pt;
-}
-h3 { 
-    font-size: 12pt ; 
-    font-family: Montserrat, sans-serif;
-    margin: 0;
-    padding: 2pt;    
-} 
-h4 { font-size: 12pt ; } 
-p { 
-    font-size: 11pt;
-    margin: 0;
-    padding-top: 0;
-}
-table {
-    font-size: 9pt ;
-}
-th {
-    table-layout: auto;
-    padding-top: 4pt;
-    padding-left: 2pt;
-    padding-right: 0pt;
-    background-color: white;
-    text-align: center;
-    font-weight: bold;
-    border-bottom-color: black;
-    border-bottom-width: 1px;
-    border-bottom-style: solid;
-    border-top-color: black;
-    border-top-width: 1px;
-    border-top-style: black;
-}
-td {
-    padding-top: 2pt;
-    padding-left: 2pt;
-    padding-right: 0pt;
-	text-align: center;
-}
-img {
-    vertical-align: top;
-}
-
-figcaption {
-    font-size: 9pt;
-}
-caption {
-    font-size: 9pt;
-}
-
-.hcenter {
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
-  width: 50%;
-}
-
-.vcenter {
-    display: block;
-    margin-topt: auto;
-    margin-bottom: auto;
-}
-
-table-even-row {
-    background-color: white;
-}
-
-table-odd-row {
-    background-color: lightgray;
-}
-
-</style>
+{% include "new-css.html" %}
 
 {% set metadata = load_json(plot_graphs.files["metadata.json"].cache_filepath) %}
 {% set oa_table_by_year = load_json(plot_graphs.files['oa_table_by_year.json'].cache_filepath) %}
 {% set focus_year = load_json(plot_graphs.files['focus_year_data.json'].cache_filepath) %}
 
-<!-- Static Frame Left Footer for Reports -->
+<!-- Title Page -->
 
-<div id="left_footer_content">
-    <p>
-    Produced by the Curtin Open Knowledge Initiative - page <pdf:pagenumber>
-    </p>
-
-    <p>
-    Report Version 0.1 - Generated on {{ helper.created_at() }}
-    </p>
+<div>
+    <p class="titleface">{{ metadata.entity_name }} Open Knowledge Report</p>
 </div>
 
-<!-- Static Frame Right Footer for Reports -->
+<!-- switch page templates -->
 
-<div id="right_footer_content">
-    <img src="/Users/266883j/Documents/oa_reporting_demo/assets/coki_small.png" width="150" class="vcenter" />
+<pdf:nexttemplate name="report">
+<pdf:nextpage>
+<!-- Static Frame for Report Footer -->
+
+<div id="footer_content" class="footer">
+    <p style="border-top-color: black; border-top-style:solid; border-top-width: 1px;">
+    <i><b>Curtin Open Knowledge Initiative</b></i><br>
+    Open Knowledge Report Version 0.1 - Generated on {{ helper.created_at() }}
+    page <pdf:pagenumber>
+    <img src="/Users/266883j/Documents/oa_reporting_demo/assets/coki_small.png" width="150" align="right" />
+    </p>
 </div>
 
 <!-- Content Frame for Report Contents -->
 
-# Open Knowledge Report for {{ metadata.entity_name }}
+# {{ metadata.entity_name }} Open Knowledge Report 
 
-<i>{{ metadata.entity_name }}, GRID: {{ metadata.identifier }}, Report generated on {{ helper.created_at() }}</i>
+<p class="subtitle">
+GRID: {{ metadata.identifier }}, Report generated on {{ helper.created_at() }}
+</p>
 
 ## Data Sources and Outline
 
@@ -202,43 +70,18 @@ In {{ focus_year.published_year }} the overall level of open access for {{ metad
     <figcaption><strong>Figure 2.</strong> Open Access Performance Over Time and Comparison With Peer Institutions.</figcaption>
 </figure>
 
+<figure>
+    <p>
+    <img src="global_comparison.png" width=450px />
+    <img src="timepath.png"  width=400px />
+    <figcaption><strong>Figure X.</strong> Global Comparison for {{ focus_year.published_year }} and Comparison Over Time With Peer Institutions.</figcaption>
+</figure>
+
 ### Funders and Open Access Status of Funded Outputs
 
 All DOIs identified for {{ focus_year.year }} were matched to funder names provided in Crossref metadata. For DOIs matched to each funder DOI open access status was determined. The number of overall outputs and those open access as well as the proportion is given. This analysis is dependent on the quality of Crossref funder metadata provided by publishers. Currently this is patchy, so numbers should be treated as lower-bound estimates. The percentage of open access is generally reliable as an estimate.
 
-
-{% set table_columns = oa_table_by_year[0].keys() %}
-<table>
-    <caption><strong>Table 1.</strong> Open Access by Type and Year of Publication for {{ metadata.entity_name }}</caption>
-    <thead>
-        <tr>
-            {% for col in table_columns %}
-                {% if col == 'Year' %}
-                <th text-align=left>{{ col }}</th>
-                {% else %}
-                <th>{{ col }}</th>
-                {% endif %}
-            {% endfor %}
-        </tr>
-    </thead>
-    <tbody>
-        {% for row in oa_table_by_year[1:] %}
-            {% if loop.index is even() %}
-            <tr style="table-even-row">
-            {% else %}
-            <tr style="table-odd-row">
-            {% endif %}
-                {% for col in table_columns %}
-                    {% if col == 'Year' %}
-                    <td text-align=left>{{ row[col] }}</td>
-                    {% else %}
-                    <td>{{ row[col] }}</td>
-                    {% endif %}
-                {% endfor %}
-            </tr>
-        {% endfor %}
-    </tbody>
-</table>
+{{ helper.tableize(oa_table_by_year, 1) }}
 
 <figure>
     <p>

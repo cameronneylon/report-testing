@@ -74,7 +74,6 @@ FROM
     UNNEST(years) as years
 
 WHERE
-    id = "grid.6571.5" AND
     years.published_year > 2000 and
     years.published_year < 2020
 '''
@@ -93,76 +92,77 @@ WHERE
     helpers.clean_geo_names(institutions)
     helpers.nice_column_names(institutions)
 
-#     template_sql = '''
-# SELECT
-#   id,
-#   years.published_year as published_year,
-#   funders.name as name,
-#   funders.count as count,
-#   funders.oa as oa,
-#   funders.green as green,
-#   funders.gold as gold
+    template_sql = '''
+SELECT
+  id,
+  years.published_year as published_year,
+  funders.name as name,
+  funders.count as count,
+  funders.oa as oa,
+  funders.green as green,
+  funders.gold as gold
 
-# FROM `{}`,
-#   UNNEST(years) as years,
-#   UNNEST(years.combined.funders) as funders
+FROM `{}`,
+  UNNEST(years) as years,
+  UNNEST(years.combined.funders) as funders
 
-# WHERE
-#   years.published_year = {}
+WHERE
+  years.published_year = {}
 
-# ORDER BY published_year DESC, count DESC
-# '''
-#     funders_sql = template_sql.format(current_table, *year_range)
-#     funders = pd.io.gbq.read_gbq(funders_sql,
-#                                  project_id=project_id,
-#                                  credentials=credentials,
-#                                  dialect='standard',
-#                                  verbose=False)
-#     helpers.calculate_percentages(funders,
-#                                   ['oa', 'green', 'gold'],
-#                                   'count')
-#     helpers.nice_column_names(funders)
+ORDER BY published_year DESC, count DESC
+'''
+    funders_sql = template_sql.format(current_table, focus_year)
+    funders = pd.io.gbq.read_gbq(funders_sql,
+                                 project_id=project_id,
+                                 credentials=credentials,
+                                 dialect='standard',
+                                 verbose=False)
+    helpers.calculate_percentages(funders,
+                                  ['oa', 'green', 'gold'],
+                                  'count')
+    helpers.nice_column_names(funders)
 
-#     template_sql = '''
-# SELECT
-#   id,
-#   years.published_year as published_year,
-#   type.type as type,
-#   type.total as total,
-#   type.oa as oa,
-#   type.green as green,
-#   type.gold as gold
+    template_sql = '''
+SELECT
+  id,
+  years.published_year as published_year,
+  type.type as type,
+  type.total as total,
+  type.oa as oa,
+  type.green as green,
+  type.gold as gold
 
-# FROM `{}`,
-#   UNNEST(years) as years,
-#   UNNEST(years.combined.output_types) as type
+FROM `{}`,
+  UNNEST(years) as years,
+  UNNEST(years.combined.output_types) as type
 
-# WHERE
-#   years.published_year > {} AND
-#   years.published_year < {}
+WHERE
+  years.published_year > {} AND
+  years.published_year < {}
 
-# ORDER BY published_year DESC
-# '''
-#     type_sql = template_sql.format(current_table, *year_range)
-#     output_types = pd.io.gbq.read_gbq(type_sql,
-#                                       project_id=project_id,
-#                                       credentials=credentials,
-#                                       dialect='standard',
-#                                       verbose=False)
-#     helpers.calculate_percentages(output_types,
-#                                   ['oa', 'green', 'gold'],
-#                                   'total')
-#     helpers.clean_output_type_names(output_types)
-#     helpers.nice_column_names(output_types)
+ORDER BY published_year DESC
+'''
+    type_sql = template_sql.format(current_table, *year_range)
+    output_types = pd.io.gbq.read_gbq(type_sql,
+                                      project_id=project_id,
+                                      credentials=credentials,
+                                      dialect='standard',
+                                      verbose=False)
+    helpers.calculate_percentages(output_types,
+                                  ['oa', 'green', 'gold'],
+                                  'total')
+    helpers.clean_output_type_names(output_types)
+    helpers.nice_column_names(output_types)
     
     with pd.HDFStore(HDF5_CANONICAL_FILENAME) as store: # write directly to the CACHE file location
         store['institutions'] = institutions
-        # store['funders'] = funders
-        # store['outputs_types'] = output_types
+        store['funders'] = funders
+        store['outputs_types'] = output_types
     af.add_existing_file(HDF5_CANONICAL_FILENAME, remove=True)
 
 
 def generate_table_data(batch,
+                        title,
                         df: pd.DataFrame,
                         identifier: str,
                         columns: list,
@@ -170,7 +170,8 @@ def generate_table_data(batch,
                         sort_column: str = 'Year of Publication',
                         sort_ascending: bool = True,
                         decimals: int = 0,
-                        short_column_names: list = None) -> dict:
+                        short_column_names: list = None,
+                        column_alignments = None) -> dict:
 
     table_data = pd.DataFrame()
     df = df[df[identifier_column] == identifier]
@@ -183,7 +184,16 @@ def generate_table_data(batch,
             col_data = np.int_(col_data.round(decimals=decimals))
         table_data[column] = col_data
     table_data.sort_values(sort_column, ascending=sort_ascending, inplace=True)
-    return table_data.to_dict(orient='records')
+    table_data_list =  table_data.to_dict(orient='records')
+    
+    if short_column_names:
+        columns = short_column_names
+    if not column_alignments:
+        column_alignments = ['center'] * len(columns)
+    column_list = [ {'name' : name, 'alignment' : alignment} for name, alignment in zip(columns, column_alignments)]
+    return {'title': title,
+            'columns': column_list,
+            'rows': table_data_list}
 
 
 def get_gcp_credentials():
@@ -208,8 +218,8 @@ def plot_graphs(batch,
     print(store_filepath)
     with pd.HDFStore(store_filepath) as store: # write directly to the CACHE file location
         institutions = store['institutions']
-        # funders = store['funders']
-        # output_types = store['outputs_types']
+        funders = store['funders']
+        output_types = store['outputs_types']
 
     # Basic Report Metadata
     metadata = {'entity_name': helpers.id2name(institutions, identifier),
@@ -231,35 +241,23 @@ def plot_graphs(batch,
     for f in batch.generate_file('focus_year_data.json'):
         json.dump(d, f)
 
-    # # Outputs and Output Types
-    # outputs_over_time = charts.OutputTypesTimeChart(output_types,
-    #                                                 identifier,
-    #                                                 year_range)
-    # outputs_over_time.process_data()
-    # output_types_graph = outputs_over_time.plot()
-    # output_types_graph.savefig('outputs_time_chart.png', bbox_inches='tight', dpi=300)
-    # batch.add_existing_file('outputs_time_chart.png', remove=True)
+    # Outputs and Output Types
+    outputs_over_time = charts.OutputTypesTimeChart(output_types,
+                                                    identifier,
+                                                    year_range)
+    outputs_over_time.process_data()
+    output_types_graph = outputs_over_time.plot()
+    output_types_graph.savefig('outputs_time_chart.png', bbox_inches='tight', dpi=300)
+    batch.add_existing_file('outputs_time_chart.png', remove=True)
 
-    # outputs_pie = charts.OutputTypesPieChart(output_types,
-    #                                      identifier,
-    #                                      focus_year)
-    # outputs_pie.process_data()
-    # outputs_pie_graph = outputs_pie.plot()
-    # outputs_pie.watermark('assets/coki_small.png', xpad=100)
-    # outputs_pie_graph.savefig('outputs_pie_chart.png', bbox_inches='tight', dpi=300)
-    # batch.add_existing_file('outputs_pie_chart.png', remove=True)
-    # batch.save_matplotlib_plt(outputs_pie_graph, 'outputs_pie_chart.png')
-
-    output_columns = ['Total Outputs',
-                           'Journal Articles',
-                           'Proceedings',
-                           'Books',
-                           'Book Sections',
-                           'Edited Volumes',
-                           'Reports‡',
-                           'Datasets‡'
-                           ]
-
+    outputs_pie = charts.OutputTypesPieChart(output_types,
+                                         identifier,
+                                         focus_year)
+    outputs_pie.process_data()
+    outputs_pie_graph = outputs_pie.plot()
+    outputs_pie.watermark('assets/coki_small.png', xpad=100)
+    outputs_pie_graph.savefig('outputs_pie_chart.png', bbox_inches='tight', dpi=300)
+    batch.add_existing_file('outputs_pie_chart.png', remove=True)
 
     # OA Values over time
     oa_columns = ['Year of Publication',
@@ -282,7 +280,9 @@ def plot_graphs(batch,
                           'Bronze (%)'
                           ]
 
-    oa_table_data = generate_table_data(batch, institutions,
+    oa_table_data = generate_table_data(batch,
+                                        f"Open Access by Type and Year of Publication for {metadata.get('entity_name')}", 
+                                        institutions,
                                         identifier,
                                         oa_columns,
                                         sort_column='Year',
@@ -300,6 +300,31 @@ def plot_graphs(batch,
     oa_progress_chart.savefig("oapc_by_time.png", bbox_inches='tight', dpi=300)
     batch.add_existing_file("oapc_by_time.png", remove=True)
 
+    # Global Comparison
+    global_comparison = charts.ScatterPlot(institutions,
+                                           'Total Green OA (%)', 
+                                           'Total Gold OA (%)', 
+                                           'Year of Publication', 2017,
+                                            hue_column='Region', 
+                                            size_column='Total Publications')
+    global_comparison.process_data()
+    global_comparison_chart = global_comparison.plot()
+    global_comparison_chart.savefig("global_comparison.png", bbox_inches='tight', dpi=300)
+    batch.add_existing_file("global_comparison.png", remove=True)
+
+    # Time Path
+    evolution = charts.TimePath(institutions,
+                                year_range,
+                                [identifier] + comparison,
+                                'Total Green OA (%)', 
+                                'Total Gold OA (%)' 
+                                )
+    evolution.process_data()
+    evolution_chart = evolution.plot()
+    evolution.watermark('assets/coki_small.png', xpad=-100)
+    evolution_chart.savefig("timepath.png", bbox_inches='tight', dpi=300)
+    batch.add_existing_file("timepath.png", remove=True)
+    
     # OA Bar Chart
     if identifier in comparison:
         comparison.remove(identifier)
@@ -312,14 +337,15 @@ def plot_graphs(batch,
     oa_bar_chart.savefig("oa_bar_chart.png", bbox_inches='tight', dpi=300)
     batch.add_existing_file("oa_bar_chart.png", remove=True)
 
-    # # OA by Funder graph
-    # funder_bar = charts.FunderGraph(funders,
-    #                                 focus_year=focus_year)
-    # funder_bar.process_data()
-    # funder_bar_chart = funder_bar.plot()
-    # funder_bar.watermark('assets/coki_small.png', xpad=-1500)
-    # funder_bar_chart.savefig("funder_bar_chart.png", bbox_inches='tight', dpi=300)
-    # batch.add_existing_file("funder_bar_chart.png", remove=True)
+    # OA by Funder graph
+    funder_bar = charts.FunderGraph(funders,
+                                    identifier=identifier,
+                                    focus_year=focus_year)
+    funder_bar.process_data()
+    funder_bar_chart = funder_bar.plot()
+    funder_bar.watermark('assets/coki_small.png', xpad=-1500)
+    funder_bar_chart.savefig("funder_bar_chart.png", bbox_inches='tight', dpi=300)
+    batch.add_existing_file("funder_bar_chart.png", remove=True)
 
     # Citation graphs
     for kind in ['count', 'per-article', 'advantage']:
